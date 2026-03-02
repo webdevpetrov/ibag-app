@@ -1,26 +1,35 @@
-import { FlatList, View, Text, StyleSheet } from 'react-native';
+import { useState, useEffect } from 'react';
+import { FlatList, View, Text, Pressable, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { getCategories } from '../api/client';
+import { getCategoryIcon } from '../config/categoryIcons';
+import Loader from '../components/Loader';
 import theme from '../config/theme';
 
-const categories = [
-  { id: 1, name: 'Плодове и зеленчуци', icon: 'fruit-watermelon' },
-  { id: 2, name: 'Месо и риба', icon: 'food-steak' },
-  { id: 3, name: 'Млечни и яйца', icon: 'cheese' },
-  { id: 4, name: 'Колбаси и деликатеси', icon: 'sausage' },
-  { id: 5, name: 'Бистро', icon: 'bowl-mix' },
-  { id: 6, name: 'Пекарна', icon: 'bread-slice' },
-  { id: 7, name: 'Био', icon: 'sprout' },
-  { id: 8, name: 'Фермерски пазар', icon: 'basket' },
-  { id: 9, name: 'Специални храни', icon: 'food-apple' },
-  { id: 10, name: 'Замразени храни', icon: 'snowflake' },
-  { id: 11, name: 'Основни храни и консерви', icon: 'pasta' },
-  { id: 12, name: 'Сладко и солено', icon: 'candy' },
-  { id: 13, name: 'Напитки', icon: 'bottle-soda' },
-  { id: 14, name: 'За бебето и детето', icon: 'baby-bottle-outline' },
-  { id: 15, name: 'Други', icon: 'food-apple' },
-];
+export default function CategoriesScreen({ navigation }) {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-export default function CategoriesScreen() {
+  useEffect(() => {
+    getCategories()
+      .then((data) => setCategories(data.data || data))
+      .catch((err) => setError(err.message || 'Грешка при зареждане.'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.error}>{error}</Text>
+      </View>
+    );
+  }
+
   return (
     <FlatList
       style={styles.container}
@@ -30,15 +39,18 @@ export default function CategoriesScreen() {
       columnWrapperStyle={styles.row}
       keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => (
-        <View style={styles.card}>
+        <Pressable
+          style={styles.card}
+          onPress={() => navigation.navigate('CategoryScreen', { category: item })}
+        >
           <MaterialCommunityIcons
-            name={item.icon}
+            name={getCategoryIcon(item.slug)}
             size={37}
             color={theme.colors.primary}
             style={styles.icon}
           />
           <Text style={styles.label}>{item.name}</Text>
-        </View>
+        </Pressable>
       )}
     />
   );
@@ -74,5 +86,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.text,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  error: {
+    color: 'red',
+    fontSize: 16,
   },
 });

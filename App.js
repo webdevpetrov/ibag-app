@@ -1,16 +1,32 @@
+import Loader from './src/components/Loader';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
-import BottomTabsNavigator from './src/navigation/BottomNavigation';
+import MainNavigator from './src/navigation/MainNavigator';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
 import theme from './src/config/theme';
+
+function AppContent() {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  return (
+    <NavigationContainer>
+      <MainNavigator />
+    </NavigationContainer>
+  );
+}
 
 export default function App() {
   return (
     <PaperProvider theme={theme}>
-      <StatusBar style="light" />
-      <NavigationContainer>
-        <BottomTabsNavigator />
-      </NavigationContainer>
+      <AuthProvider>
+        <StatusBar style="light" />
+        <AppContent />
+      </AuthProvider>
     </PaperProvider>
   );
 }
