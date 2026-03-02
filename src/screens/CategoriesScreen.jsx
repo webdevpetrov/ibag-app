@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FlatList, View, Text, Pressable, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { getCategories } from '../api/client';
@@ -9,14 +9,27 @@ import theme from '../config/theme';
 export default function CategoriesScreen({ navigation }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchCategories = useCallback(() => {
     getCategories()
       .then((data) => setCategories(data.data || data))
       .catch((err) => setError(err.message || 'Грешка при зареждане.'))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshing(false);
+      });
   }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  function handleRefresh() {
+    setRefreshing(true);
+    fetchCategories();
+  }
 
   if (loading) {
     return <Loader />;
@@ -38,6 +51,8 @@ export default function CategoriesScreen({ navigation }) {
       numColumns={2}
       columnWrapperStyle={styles.row}
       keyExtractor={(item) => String(item.id)}
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
       renderItem={({ item }) => (
         <Pressable
           style={styles.card}

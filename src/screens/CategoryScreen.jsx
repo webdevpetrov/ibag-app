@@ -5,7 +5,7 @@ import {
   FlatList,
   Image,
   Pressable,
-  ActivityIndicator, // used by footer
+  ActivityIndicator,
   StyleSheet,
 } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -24,11 +24,13 @@ export default function CategoryScreen({ route, navigation }) {
   const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(!hasChildren);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchProducts = useCallback((categoryId, pageNum) => {
+  const fetchProducts = useCallback((categoryId, pageNum, isRefresh = false) => {
     const isFirstPage = pageNum === 1;
-    if (isFirstPage) setLoading(true);
+    if (isRefresh) setRefreshing(true);
+    else if (isFirstPage) setLoading(true);
     else setLoadingMore(true);
 
     getProducts(categoryId, pageNum)
@@ -41,8 +43,9 @@ export default function CategoryScreen({ route, navigation }) {
       })
       .catch((err) => setError(err.message || 'Грешка при зареждане.'))
       .finally(() => {
-        if (isFirstPage) setLoading(false);
-        else setLoadingMore(false);
+        setLoading(false);
+        setLoadingMore(false);
+        setRefreshing(false);
       });
   }, []);
 
@@ -51,6 +54,11 @@ export default function CategoryScreen({ route, navigation }) {
       fetchProducts(category.id, 1);
     }
   }, [category.id, hasChildren, fetchProducts]);
+
+  function handleRefresh() {
+    setPage(1);
+    fetchProducts(category.id, 1, true);
+  }
 
   function handleEndReached() {
     if (!loadingMore && page < lastPage) {
@@ -121,6 +129,8 @@ export default function CategoryScreen({ route, navigation }) {
         </Pressable>
       )}
       contentContainerStyle={styles.listContent}
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
       ListEmptyComponent={
