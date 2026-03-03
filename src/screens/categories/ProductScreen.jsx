@@ -8,10 +8,10 @@ import {
   Dimensions,
 } from 'react-native';
 import { Button } from 'react-native-paper';
-import { getProduct } from '../api/client';
-import Loader from '../components/Loader';
-import { useCart } from '../context/CartContext';
-import theme from '../config/theme';
+import { getProduct } from '../../api/client';
+import Loader from '../../components/Loader';
+import { useCart } from '../../context/CartContext';
+import theme from '../../config/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 

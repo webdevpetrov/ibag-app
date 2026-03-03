@@ -3,12 +3,13 @@ import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
 import MainNavigator from './src/navigation/MainNavigator';
+import AuthNavigator from './src/navigation/AuthNavigator';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { CartProvider } from './src/context/CartContext';
 import theme from './src/config/theme';
 
 function AppContent() {
-  const { isLoading } = useAuth();
+  const { isLoading, isAuthenticated } = useAuth();
 
   if (isLoading) {
     return <Loader />;
@@ -16,7 +17,13 @@ function AppContent() {
 
   return (
     <NavigationContainer>
-      <MainNavigator />
+      {isAuthenticated ? (
+        <CartProvider>
+          <MainNavigator />
+        </CartProvider>
+      ) : (
+        <AuthNavigator />
+      )}
     </NavigationContainer>
   );
 }
@@ -25,10 +32,8 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <AuthProvider>
-        <CartProvider>
-          <StatusBar style="light" />
-          <AppContent />
-        </CartProvider>
+        <StatusBar style="light" />
+        <AppContent />
       </AuthProvider>
     </PaperProvider>
   );

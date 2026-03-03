@@ -9,10 +9,10 @@ import {
   StyleSheet,
 } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { getProducts } from '../api/client';
-import { getCategoryIcon } from '../config/categoryIcons';
-import Loader from '../components/Loader';
-import theme from '../config/theme';
+import { getProducts } from '../../api/client';
+import { getCategoryIcon } from '../../config/categoryIcons';
+import Loader from '../../components/Loader';
+import theme from '../../config/theme';
 
 export default function CategoryScreen({ route, navigation }) {
   const { category } = route.params;

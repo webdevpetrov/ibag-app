@@ -1,26 +1,57 @@
 import { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text, HelperText, Snackbar } from 'react-native-paper';
-import { useAuth } from '../context/AuthContext';
-import theme from '../config/theme';
+import { useAuth } from '../../context/AuthContext';
+import theme from '../../config/theme';
 
-export default function LoginScreen({ navigation }) {
-  const { signIn } = useAuth();
+export default function RegisterScreen({ navigation }) {
+  const { signUp } = useAuth();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
 
-  async function handleLogin() {
+  function validate() {
+    const errors = {};
+    if (!name.trim()) {
+      errors.name = ['Името е задължително.'];
+    } else if (name.trim().length > 255) {
+      errors.name = ['Името не може да надвишава 255 символа.'];
+    }
+    if (!email.trim()) {
+      errors.email = ['Имейлът е задължителен.'];
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errors.email = ['Невалиден имейл адрес.'];
+    }
+    if (!password) {
+      errors.password = ['Паролата е задължителна.'];
+    } else if (password.length < 8) {
+      errors.password = ['Паролата трябва да е поне 8 символа.'];
+    }
+    if (password && password !== passwordConfirmation) {
+      errors.password_confirmation = ['Паролите не съвпадат.'];
+    }
+    return errors;
+  }
+
+  async function handleRegister() {
     setFieldErrors({});
     setGeneralError('');
+
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await signIn(email, password);
-      navigation.goBack();
+      await signUp(name, email, password, passwordConfirmation);
     } catch (err) {
       if (err.status === 422 && err.errors) {
         setFieldErrors(err.errors);
@@ -37,7 +68,20 @@ export default function LoginScreen({ navigation }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Вход</Text>
+        <Text style={styles.title}>Регистрация</Text>
+
+        <TextInput
+          label="Име"
+          mode="outlined"
+          value={name}
+          onChangeText={setName}
+          autoCapitalize="words"
+          error={!!fieldErrors.name}
+          style={styles.input}
+        />
+        <HelperText type="error" visible={!!fieldErrors.name}>
+          {fieldErrors.name?.[0]}
+        </HelperText>
 
         <TextInput
           label="Имейл"
@@ -74,24 +118,38 @@ export default function LoginScreen({ navigation }) {
           {fieldErrors.password?.[0]}
         </HelperText>
 
+        <TextInput
+          label="Потвърди парола"
+          mode="outlined"
+          value={passwordConfirmation}
+          onChangeText={setPasswordConfirmation}
+          secureTextEntry={!showPassword}
+          autoCapitalize="none"
+          error={!!fieldErrors.password_confirmation}
+          style={styles.input}
+        />
+        <HelperText type="error" visible={!!fieldErrors.password_confirmation}>
+          {fieldErrors.password_confirmation?.[0]}
+        </HelperText>
+
         <Button
           mode="contained"
-          onPress={handleLogin}
+          onPress={handleRegister}
           loading={loading}
           disabled={loading}
           style={styles.button}
           buttonColor={theme.colors.primary}
         >
-          Вход
+          Регистрация
         </Button>
 
         <View style={styles.linkRow}>
-          <Text>Нямаш акаунт? </Text>
+          <Text>Вече имаш акаунт? </Text>
           <Text
             style={styles.link}
-            onPress={() => navigation.replace('Register')}
+            onPress={() => navigation.navigate('Login')}
           >
-            Регистрация
+            Вход
           </Text>
         </View>
       </ScrollView>

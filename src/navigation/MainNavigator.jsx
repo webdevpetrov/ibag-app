@@ -2,7 +2,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigation, Text, Avatar, Badge } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, CommonActions } from '@react-navigation/native';
+import { useNavigation, CommonActions, Link } from '@react-navigation/native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import HomeNavigator from './HomeNavigator';
@@ -10,7 +10,6 @@ import CategoriesNavigator from './CategoriesNavigator';
 import SearchScreen from '../screens/SearchScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import CartNavigator from './CartNavigator';
-import { Link } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import theme from '../config/theme';
@@ -18,14 +17,10 @@ import theme from '../config/theme';
 function Header() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { isAuthenticated, user } = useAuth();
+  const { user } = useAuth();
 
   function handleAvatarPress() {
-    if (isAuthenticated) {
-      navigation.navigate('Home', { screen: 'ProfileNav', params: { screen: 'Profile' } });
-    } else {
-      navigation.navigate('Home', { screen: 'ProfileNav', params: { screen: 'Login' } });
-    }
+    navigation.navigate('Home', { screen: 'ProfileNav', params: { screen: 'Profile' } });
   }
 
   return (
@@ -40,15 +35,11 @@ function Header() {
         <Text style={styles.headerTime}>ДНЕС 20:00 - 21:00</Text>
       </View>
       <Pressable style={styles.avatarContainer} onPress={handleAvatarPress}>
-        {isAuthenticated ? (
-          <Avatar.Text
-            size={44}
-            label={user.name.charAt(0).toUpperCase()}
-            style={{ backgroundColor: theme.colors.avatarBackground }}
-          />
-        ) : (
-          <Avatar.Icon size={44} icon="account" style={{ backgroundColor: theme.colors.avatarBackground }} />
-        )}
+        <Avatar.Text
+          size={44}
+          label={user?.name?.charAt(0)?.toUpperCase() ?? '?'}
+          style={{ backgroundColor: theme.colors.avatarBackground }}
+        />
         <Badge style={styles.badge}>21</Badge>
       </Pressable>
     </View>

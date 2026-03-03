@@ -53,6 +53,20 @@ export function getUser(token) {
     .catch(handleError);
 }
 
+export function updateProfile(token, { name }) {
+  return api
+    .put('/user/profile', { name }, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function updatePassword(token, { current_password, password, password_confirmation }) {
+  return api
+    .put('/user/password', { current_password, password, password_confirmation }, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
 export function logout(token) {
   return api
     .post('/logout', null, { headers: { Authorization: `Bearer ${token}` } })
@@ -82,3 +96,97 @@ export function getProduct(id) {
     .then((r) => r.data)
     .catch(handleError);
 }
+
+export function createOrder(token, { address_id, notes, items }) {
+  return api
+    .post(
+      '/orders',
+      { address_id, notes, items },
+      { headers: { Authorization: `Bearer ${token}` } },
+    )
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function getOrders(token, page = 1) {
+  return api
+    .get('/orders', {
+      params: { page },
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function getOrder(token, id) {
+  return api
+    .get(`/orders/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function cancelOrder(token, id) {
+  return api
+    .patch(`/orders/${id}/cancel`, null, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function getAddresses(token) {
+  return api
+    .get('/user/addresses', { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function createAddress(token, data) {
+  return api
+    .post('/user/addresses', data, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function updateAddress(token, id, data) {
+  return api
+    .put(`/user/addresses/${id}`, data, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function deleteAddress(token, id) {
+  return api
+    .delete(`/user/addresses/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function getComplaints(token, page = 1) {
+  return api
+    .get('/complaints', {
+      params: { page },
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function getComplaint(token, id) {
+  return api
+    .get(`/complaints/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function createComplaint(token, formData) {
+  return api
+    .post('/complaints', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+      transformRequest: (data) => data,
+    })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+

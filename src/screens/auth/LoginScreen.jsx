@@ -1,28 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text, HelperText, Snackbar } from 'react-native-paper';
-import { useAuth } from '../context/AuthContext';
-import theme from '../config/theme';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useAuth } from '../../context/AuthContext';
+import theme from '../../config/theme';
 
-export default function RegisterScreen({ navigation }) {
-  const { signUp } = useAuth();
-  const [name, setName] = useState('');
+export default function LoginScreen({ navigation }) {
+  const { signIn, biometricAvailable, biometricEnabled, hasStoredToken, pendingBiometric, authenticateWithBiometric } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
+  const [bioLoading, setBioLoading] = useState(false);
 
-  async function handleRegister() {
+  const showBiometricButton = biometricAvailable && biometricEnabled && hasStoredToken;
+
+  useEffect(() => {
+    if (pendingBiometric) {
+      handleBiometricLogin();
+    }
+  }, []);
+
+  async function handleBiometricLogin() {
+    setBioLoading(true);
+    try {
+      const result = await authenticateWithBiometric();
+      if (!result.success && !result.cancelled) {
+        setGeneralError('Неуспешно удостоверяване. Влезте с имейл и парола.');
+      }
+    } catch {
+      setGeneralError('Неуспешно удостоверяване. Влезте с имейл и парола.');
+    } finally {
+      setBioLoading(false);
+    }
+  }
+
+  async function handleLogin() {
     setFieldErrors({});
     setGeneralError('');
     setLoading(true);
 
     try {
-      await signUp(name, email, password, passwordConfirmation);
-      navigation.goBack();
+      await signIn(email, password);
     } catch (err) {
       if (err.status === 422 && err.errors) {
         setFieldErrors(err.errors);
@@ -39,20 +60,30 @@ export default function RegisterScreen({ navigation }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Регистрация</Text>
+        <Text style={styles.title}>Вход</Text>
 
-        <TextInput
-          label="Име"
-          mode="outlined"
-          value={name}
-          onChangeText={setName}
-          autoCapitalize="words"
-          error={!!fieldErrors.name}
-          style={styles.input}
-        />
-        <HelperText type="error" visible={!!fieldErrors.name}>
-          {fieldErrors.name?.[0]}
-        </HelperText>
+        {showBiometricButton && (
+          <View style={styles.biometricSection}>
+            <Button
+              mode="outlined"
+              onPress={handleBiometricLogin}
+              loading={bioLoading}
+              disabled={bioLoading}
+              icon={() => (
+                <MaterialCommunityIcons name="fingerprint" size={22} color={theme.colors.primary} />
+              )}
+              style={styles.biometricButton}
+              textColor={theme.colors.primary}
+            >
+              Вход с биометрия
+            </Button>
+            <View style={styles.dividerRow}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>или</Text>
+              <View style={styles.dividerLine} />
+            </View>
+          </View>
+        )}
 
         <TextInput
           label="Имейл"
@@ -89,38 +120,24 @@ export default function RegisterScreen({ navigation }) {
           {fieldErrors.password?.[0]}
         </HelperText>
 
-        <TextInput
-          label="Потвърди парола"
-          mode="outlined"
-          value={passwordConfirmation}
-          onChangeText={setPasswordConfirmation}
-          secureTextEntry={!showPassword}
-          autoCapitalize="none"
-          error={!!fieldErrors.password_confirmation}
-          style={styles.input}
-        />
-        <HelperText type="error" visible={!!fieldErrors.password_confirmation}>
-          {fieldErrors.password_confirmation?.[0]}
-        </HelperText>
-
         <Button
           mode="contained"
-          onPress={handleRegister}
+          onPress={handleLogin}
           loading={loading}
           disabled={loading}
           style={styles.button}
           buttonColor={theme.colors.primary}
         >
-          Регистрация
+          Вход
         </Button>
 
         <View style={styles.linkRow}>
-          <Text>Вече имаш акаунт? </Text>
+          <Text>Нямаш акаунт? </Text>
           <Text
             style={styles.link}
-            onPress={() => navigation.replace('Login')}
+            onPress={() => navigation.navigate('Register')}
           >
-            Вход
+            Регистрация
           </Text>
         </View>
       </ScrollView>
@@ -166,5 +183,27 @@ const styles = StyleSheet.create({
   link: {
     color: theme.colors.primary,
     fontWeight: '600',
+  },
+  biometricSection: {
+    marginBottom: 16,
+  },
+  biometricButton: {
+    paddingVertical: 4,
+    borderColor: theme.colors.primary,
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#ddd',
+  },
+  dividerText: {
+    marginHorizontal: 12,
+    color: '#999',
+    fontSize: 13,
   },
 });

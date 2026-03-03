@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { FlatList, View, Text, Pressable, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { getCategories } from '../api/client';
-import { getCategoryIcon } from '../config/categoryIcons';
-import Loader from '../components/Loader';
-import theme from '../config/theme';
+import { getCategories } from '../../api/client';
+import { getCategoryIcon } from '../../config/categoryIcons';
+import Loader from '../../components/Loader';
+import theme from '../../config/theme';
 
 export default function CategoriesScreen({ navigation }) {
   const [categories, setCategories] = useState([]);

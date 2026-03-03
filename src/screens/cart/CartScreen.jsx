@@ -1,11 +1,11 @@
 import { View, Text, FlatList, Pressable, StyleSheet, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useCart } from '../context/CartContext';
-import CartItem from '../components/CartItem';
-import theme from '../config/theme';
+import { useCart } from '../../context/CartContext';
+import CartItem from '../../components/CartItem';
+import theme from '../../config/theme';
 
-export default function CartScreen() {
+export default function CartScreen({ navigation }) {
   const { items, cartTotal, updateQuantity, removeFromCart, clearCart } = useCart();
 
   function confirmRemove(product) {
@@ -80,6 +80,7 @@ export default function CartScreen() {
           textColor={theme.colors.onPrimary}
           style={styles.checkoutButton}
           contentStyle={styles.checkoutContent}
+          onPress={() => navigation.navigate('Checkout')}
         >
           Поръчай
         </Button>

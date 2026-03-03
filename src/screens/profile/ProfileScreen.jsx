@@ -1,8 +1,8 @@
-import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
-import { Avatar, Text, Divider, Button } from 'react-native-paper';
+import { View, ScrollView, StyleSheet, Pressable, Switch } from 'react-native';
+import { Avatar, Text, Divider } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useAuth } from '../context/AuthContext';
-import theme from '../config/theme';
+import { useAuth } from '../../context/AuthContext';
+import theme from '../../config/theme';
 
 function MenuItem({ icon, label, badge, onPress }) {
   return (
@@ -21,38 +21,16 @@ function MenuItem({ icon, label, badge, onPress }) {
   );
 }
 
-function GuestView({ navigation }) {
-  return (
-    <View style={styles.guestContainer}>
-      <Avatar.Icon
-        size={80}
-        icon="account"
-        style={{ backgroundColor: theme.colors.primary }}
-      />
-      <Text style={styles.guestTitle}>Влез в акаунта си</Text>
-      <Text style={styles.guestSubtitle}>
-        За да управляваш поръчките и профила си
-      </Text>
-      <Button
-        mode="contained"
-        onPress={() => navigation.navigate('Login')}
-        style={styles.guestButton}
-        buttonColor={theme.colors.primary}
-      >
-        Вход
-      </Button>
-      <Text
-        style={styles.guestLink}
-        onPress={() => navigation.navigate('Register')}
-      >
-        Регистрация
-      </Text>
-    </View>
-  );
-}
-
 function AuthView({ navigation }) {
-  const { user, signOut } = useAuth();
+  const { user, signOut, biometricAvailable, biometricEnabled, enableBiometric, disableBiometric } = useAuth();
+
+  async function handleBiometricToggle(value) {
+    if (value) {
+      await enableBiometric();
+    } else {
+      await disableBiometric();
+    }
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -70,7 +48,8 @@ function AuthView({ navigation }) {
       <Divider />
 
       <View style={styles.section}>
-        <MenuItem icon="package-variant-closed" label="Поръчки" />
+        <MenuItem icon="package-variant-closed" label="Поръчки" onPress={() => navigation.navigate('OrderList')} />
+        <MenuItem icon="alert-circle-outline" label="Рекламации" onPress={() => navigation.navigate('ComplaintList')} />
         <MenuItem icon="heart-outline" label="Любими" />
         <MenuItem icon="star-outline" label="Оцени ни" badge={11} />
         <MenuItem icon="bell-outline" label="Известия" badge={10} />
@@ -80,9 +59,28 @@ function AuthView({ navigation }) {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Моят профил</Text>
-        <MenuItem icon="map-marker-outline" label="Адреси" />
+        <MenuItem icon="account-edit-outline" label="Редакция на профил" onPress={() => navigation.navigate('ProfileEdit')} />
+        <MenuItem icon="map-marker-outline" label="Адреси" onPress={() => navigation.navigate('AddressList')} />
         <MenuItem icon="ticket-percent-outline" label="Промо кодове" />
         <MenuItem icon="wallet-giftcard" label="Ваучери" />
+      </View>
+
+      <Divider />
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Сигурност</Text>
+        <MenuItem icon="lock-outline" label="Смяна на парола" onPress={() => navigation.navigate('ChangePassword')} />
+        {biometricAvailable && (
+          <View style={styles.menuItem}>
+            <MaterialCommunityIcons name="fingerprint" size={24} color={theme.colors.text} />
+            <Text style={styles.menuLabel}>Вход с биометрия</Text>
+            <Switch
+              value={biometricEnabled}
+              onValueChange={handleBiometricToggle}
+              trackColor={{ true: theme.colors.primary }}
+              thumbColor="#fff"
+            />
+          </View>
+        )}
       </View>
 
       <Divider />
@@ -95,12 +93,6 @@ function AuthView({ navigation }) {
 }
 
 export default function ProfileScreen({ navigation }) {
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return <GuestView navigation={navigation} />;
-  }
-
   return <AuthView navigation={navigation} />;
 }
 
@@ -163,35 +155,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',
-  },
-  guestContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: theme.colors.background,
-  },
-  guestTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginTop: 20,
-    color: theme.colors.text,
-  },
-  guestSubtitle: {
-    fontSize: 14,
-    color: '#999',
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  guestButton: {
-    marginTop: 24,
-    paddingVertical: 4,
-    width: '100%',
-  },
-  guestLink: {
-    marginTop: 16,
-    color: theme.colors.primary,
-    fontWeight: '600',
-    fontSize: 15,
   },
 });
