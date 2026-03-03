@@ -9,9 +9,10 @@ import HomeNavigator from './HomeNavigator';
 import CategoriesNavigator from './CategoriesNavigator';
 import SearchScreen from '../screens/SearchScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
-import CartScreen from '../screens/CartScreen';
+import CartNavigator from './CartNavigator';
 import { Link } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import theme from '../config/theme';
 
 function Header() {
@@ -57,6 +58,8 @@ function Header() {
 const BottomTabs = createBottomTabNavigator();
 
 export default function BottomTabsNavigator() {
+  const { cartCount } = useCart();
+
   return (
     <BottomTabs.Navigator
       screenOptions={{
@@ -138,11 +141,16 @@ export default function BottomTabsNavigator() {
       />
       <BottomTabs.Screen
         name="Cart"
-        component={CartScreen}
+        component={CartNavigator}
         options={{
           tabBarLabel: 'Количка',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="cart" color={color} size={size} />
+            <View>
+              <MaterialCommunityIcons name="cart" color={color} size={size} />
+              {cartCount > 0 && (
+                <Badge size={16} style={styles.cartBadge}>{cartCount}</Badge>
+              )}
+            </View>
           ),
         }}
       />
@@ -193,5 +201,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -4,
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -10,
+    backgroundColor: theme.colors.notification,
   },
 });

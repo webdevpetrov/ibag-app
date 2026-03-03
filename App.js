@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
 import MainNavigator from './src/navigation/MainNavigator';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { CartProvider } from './src/context/CartContext';
 import theme from './src/config/theme';
 
 function AppContent() {
@@ -24,8 +25,10 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <AuthProvider>
-        <StatusBar style="light" />
-        <AppContent />
+        <CartProvider>
+          <StatusBar style="light" />
+          <AppContent />
+        </CartProvider>
       </AuthProvider>
     </PaperProvider>
   );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 import { Button } from 'react-native-paper';
 import { getProduct } from '../api/client';
 import Loader from '../components/Loader';
+import { useCart } from '../context/CartContext';
 import theme from '../config/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -19,6 +20,14 @@ export default function ProductScreen({ route, navigation }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [added, setAdded] = useState(false);
+  const { addToCart } = useCart();
+
+  const handleAddToCart = useCallback(() => {
+    addToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  }, [product, addToCart]);
 
   useEffect(() => {
     getProduct(productId)
@@ -69,9 +78,10 @@ export default function ProductScreen({ route, navigation }) {
           textColor={theme.colors.onPrimary}
           style={styles.addButton}
           contentStyle={styles.addButtonContent}
-          onPress={() => {}}
+          onPress={handleAddToCart}
+          icon={added ? 'check' : undefined}
         >
-          Добави в количката
+          {added ? 'Добавено!' : 'Добави в количката'}
         </Button>
       </View>
     </View>
