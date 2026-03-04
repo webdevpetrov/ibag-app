@@ -8,7 +8,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import HomeNavigator from './HomeNavigator';
 import CategoriesNavigator from './CategoriesNavigator';
 import SearchScreen from '../screens/SearchScreen';
-import FavoritesScreen from '../screens/FavoritesScreen';
+import FavoritesNavigator from './FavoritesNavigator';
 import CartNavigator from './CartNavigator';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -122,7 +122,7 @@ export default function BottomTabsNavigator() {
       />
       <BottomTabs.Screen
         name="Favorites"
-        component={FavoritesScreen}
+        component={FavoritesNavigator}
         options={{
           tabBarLabel: 'Любими',
           tabBarIcon: ({ color, size }) => (

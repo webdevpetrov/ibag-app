@@ -6,6 +6,7 @@ import MainNavigator from './src/navigation/MainNavigator';
 import AuthNavigator from './src/navigation/AuthNavigator';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { CartProvider } from './src/context/CartContext';
+import { FavoritesProvider } from './src/context/FavoritesContext';
 import theme from './src/config/theme';
 
 function AppContent() {
@@ -19,7 +20,9 @@ function AppContent() {
     <NavigationContainer>
       {isAuthenticated ? (
         <CartProvider>
-          <MainNavigator />
+          <FavoritesProvider>
+            <MainNavigator />
+          </FavoritesProvider>
         </CartProvider>
       ) : (
         <AuthNavigator />

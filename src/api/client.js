@@ -190,3 +190,27 @@ export function createComplaint(token, formData) {
     .catch(handleError);
 }
 
+export function getFavorites(token, page = 1) {
+  return api
+    .get('/user/favorites', {
+      params: { page },
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function addFavorite(token, productId) {
+  return api
+    .post('/user/favorites', { product_id: productId }, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
+export function removeFavorite(token, favoriteId) {
+  return api
+    .delete(`/user/favorites/${favoriteId}`, { headers: { Authorization: `Bearer ${token}` } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+

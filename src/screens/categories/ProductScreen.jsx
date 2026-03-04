@@ -7,10 +7,11 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 import { getProduct } from '../../api/client';
 import Loader from '../../components/Loader';
 import { useCart } from '../../context/CartContext';
+import { useFavorites } from '../../context/FavoritesContext';
 import theme from '../../config/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -22,6 +23,7 @@ export default function ProductScreen({ route, navigation }) {
   const [error, setError] = useState(null);
   const [added, setAdded] = useState(false);
   const { addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const handleAddToCart = useCallback(() => {
     addToCart(product);
@@ -57,11 +59,20 @@ export default function ProductScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {product.image_url ? (
-          <Image source={{ uri: product.image_url }} style={styles.image} resizeMode="contain" />
-        ) : (
-          <View style={[styles.image, styles.imagePlaceholder]} />
-        )}
+        <View style={styles.imageContainer}>
+          {product.image_url ? (
+            <Image source={{ uri: product.image_url }} style={styles.image} resizeMode="contain" />
+          ) : (
+            <View style={[styles.image, styles.imagePlaceholder]} />
+          )}
+          <IconButton
+            icon={isFavorite(product.id) ? 'heart' : 'heart-outline'}
+            iconColor={isFavorite(product.id) ? theme.colors.notification : '#555'}
+            size={26}
+            style={styles.heartOverlay}
+            onPress={() => toggleFavorite(product)}
+          />
+        </View>
 
         <Text style={styles.name}>{product.name}</Text>
         <Text style={styles.price}>{product.price} лв.</Text>
@@ -79,9 +90,9 @@ export default function ProductScreen({ route, navigation }) {
           style={styles.addButton}
           contentStyle={styles.addButtonContent}
           onPress={handleAddToCart}
-          icon={added ? 'check' : undefined}
+          icon={added ? 'check' : 'cart-outline'}
         >
-          {added ? 'Добавено!' : 'Добави в количката'}
+          {added ? 'Добавено!' : 'Добави'}
         </Button>
       </View>
     </View>
@@ -96,6 +107,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 24,
   },
+  imageContainer: {
+    position: 'relative',
+  },
   image: {
     width: SCREEN_WIDTH,
     height: SCREEN_WIDTH * 0.75,
@@ -103,6 +117,18 @@ const styles = StyleSheet.create({
   },
   imagePlaceholder: {
     backgroundColor: '#eee',
+  },
+  heartOverlay: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
   },
   name: {
     fontSize: 20,
@@ -132,7 +158,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
   },
   addButton: {
-    borderRadius: 10,
+    borderRadius: 24,
   },
   addButtonContent: {
     paddingVertical: 6,

@@ -9,11 +9,12 @@ import {
   ActivityIndicator,
   useWindowDimensions,
 } from 'react-native';
-import { Card, Button, Chip } from 'react-native-paper';
+import { Card, Button, Chip, IconButton } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { getCategories, getProducts } from '../api/client';
 import { getCategoryIcon } from '../config/categoryIcons';
 import { useCart } from '../context/CartContext';
+import { useFavorites } from '../context/FavoritesContext';
 import theme from '../config/theme';
 
 const BANNER_PADDING = 12;
@@ -21,12 +22,8 @@ const BANNER_GAP = 8;
 const CARD_WIDTH = 170;
 const IMAGE_HEIGHT = 150;
 
-const bannerD = require('../../assets/img/home/d.webp');
-const bannerM = require('../../assets/img/home/m.webp');
-const bannerMonge = require('../../assets/img/home/monge.webp');
-const bannerPurina = require('../../assets/img/home/purina.webp');
-const bannerZ = require('../../assets/img/home/z.webp');
-const bannerZoo = require('../../assets/img/home/zoo.webp');
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL.replace(/\/api\/v\d+$/, '');
+const bannerUrl = (name) => `${BASE_URL}/storage/banners/${name}`;
 
 const FEATURED_CATEGORIES = [
   { id: 2, name: 'Плодове' },
@@ -37,18 +34,18 @@ const FEATURED_CATEGORIES = [
 ];
 
 const BANNERS = [
-  { source: bannerZ, categoryId: 3, categoryName: 'Зеленчуци' },
-  { source: bannerPurina, categoryId: 223, categoryName: 'Храна за котки' },
+  { source: { uri: bannerUrl('z.webp') }, categoryId: 3, categoryName: 'Зеленчуци' },
+  { source: { uri: bannerUrl('purina.webp') }, categoryId: 223, categoryName: 'Храна за котки' },
 ];
 
 const BANNERS_HALF = [
-  { source: bannerM, categoryId: 137, categoryName: 'Маслини' },
-  { source: bannerD, categoryId: 67, categoryName: 'Донъти' },
+  { source: { uri: bannerUrl('m.webp') }, categoryId: 137, categoryName: 'Маслини' },
+  { source: { uri: bannerUrl('d.webp') }, categoryId: 67, categoryName: 'Донъти' },
 ];
 
 const BANNERS_BOTTOM = [
-  { source: bannerMonge, categoryId: 222, categoryName: 'Monge' },
-  { source: bannerZoo, categoryId: 225, categoryName: 'Зоомагазин' },
+  { source: { uri: bannerUrl('monge.webp') }, categoryId: 222, categoryName: 'Monge' },
+  { source: { uri: bannerUrl('zoo.webp') }, categoryId: 225, categoryName: 'Зоомагазин' },
 ];
 
 const Banner = memo(function Banner({ source, half, onPress, fullWidth, halfWidth }) {
@@ -96,7 +93,7 @@ const BannerGroup = memo(function BannerGroup({ banners, navigation, half, style
   );
 });
 
-const ProductCard = memo(function ProductCard({ item, onPress, onAdd, added }) {
+const ProductCard = memo(function ProductCard({ item, onPress, onAdd, added, favorited, onToggleFavorite }) {
   return (
     <Card style={styles.card} onPress={onPress}>
       <Card.Cover
@@ -121,12 +118,19 @@ const ProductCard = memo(function ProductCard({ item, onPress, onAdd, added }) {
         >
           {added ? 'Добавено!' : 'Добави'}
         </Button>
+        <IconButton
+          icon={favorited ? 'heart' : 'heart-outline'}
+          iconColor={theme.colors.notification}
+          size={20}
+          onPress={onToggleFavorite}
+          style={styles.heartButton}
+        />
       </Card.Actions>
     </Card>
   );
 });
 
-const CategoryRow = memo(function CategoryRow({ category, products, navigation, addToCart }) {
+const CategoryRow = memo(function CategoryRow({ category, products, navigation, addToCart, isFavorite, toggleFavorite }) {
   const [addedId, setAddedId] = useState(null);
   const timerRef = useRef(null);
 
@@ -160,8 +164,10 @@ const CategoryRow = memo(function CategoryRow({ category, products, navigation, 
             key={item.id}
             item={item}
             added={addedId === item.id}
+            favorited={isFavorite(item.id)}
             onPress={() => handlePress(item)}
             onAdd={() => handleAdd(item)}
+            onToggleFavorite={() => toggleFavorite(item)}
           />
         ))}
       </ScrollView>
@@ -171,6 +177,7 @@ const CategoryRow = memo(function CategoryRow({ category, products, navigation, 
 
 export default function HomeScreen({ navigation }) {
   const { addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { width: screenWidth } = useWindowDimensions();
   const [categories, setCategories] = useState([]);
   const [productsByCategory, setProductsByCategory] = useState({});
@@ -218,17 +225,17 @@ export default function HomeScreen({ navigation }) {
     <ScrollView style={styles.container}>
       <BannerGroup banners={BANNERS} navigation={navigation} fullWidth={fullWidth} halfWidth={halfWidth} style={styles.bannersTop} />
 
-      <CategoryRow category={FEATURED_CATEGORIES[0]} products={productsByCategory[2]} navigation={navigation} addToCart={addToCart} />
-      <CategoryRow category={FEATURED_CATEGORIES[1]} products={productsByCategory[3]} navigation={navigation} addToCart={addToCart} />
+      <CategoryRow category={FEATURED_CATEGORIES[0]} products={productsByCategory[2]} navigation={navigation} addToCart={addToCart} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+      <CategoryRow category={FEATURED_CATEGORIES[1]} products={productsByCategory[3]} navigation={navigation} addToCart={addToCart} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
 
       <BannerGroup banners={BANNERS_HALF} navigation={navigation} half fullWidth={fullWidth} halfWidth={halfWidth} style={styles.bannersMiddle} />
 
-      <CategoryRow category={FEATURED_CATEGORIES[2]} products={productsByCategory[14]} navigation={navigation} addToCart={addToCart} />
-      <CategoryRow category={FEATURED_CATEGORIES[3]} products={productsByCategory[34]} navigation={navigation} addToCart={addToCart} />
+      <CategoryRow category={FEATURED_CATEGORIES[2]} products={productsByCategory[14]} navigation={navigation} addToCart={addToCart} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+      <CategoryRow category={FEATURED_CATEGORIES[3]} products={productsByCategory[34]} navigation={navigation} addToCart={addToCart} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
 
       <BannerGroup banners={BANNERS_BOTTOM} navigation={navigation} fullWidth={fullWidth} halfWidth={halfWidth} style={styles.bannersMiddle} />
 
-      <CategoryRow category={FEATURED_CATEGORIES[4]} products={productsByCategory[18]} navigation={navigation} addToCart={addToCart} />
+      <CategoryRow category={FEATURED_CATEGORIES[4]} products={productsByCategory[18]} navigation={navigation} addToCart={addToCart} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
 
       {categories.length > 0 && (
         <View style={styles.categoriesSection}>
@@ -348,6 +355,9 @@ const styles = StyleSheet.create({
   },
   addButtonLabel: {
     fontSize: 13,
+  },
+  heartButton: {
+    margin: 0,
   },
   categoriesSection: {
     marginTop: 16,
