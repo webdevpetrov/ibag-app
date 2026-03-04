@@ -56,6 +56,7 @@ export default function CartScreen({ navigation }) {
         renderItem={({ item }) => (
           <CartItem
             item={item}
+            onPress={() => navigation.navigate('ProductScreen', { productId: item.product.id })}
             onIncrement={() => updateQuantity(item.product.id, item.quantity + 1)}
             onDecrement={() => {
               if (item.quantity > 1) {
@@ -82,7 +83,7 @@ export default function CartScreen({ navigation }) {
           contentStyle={styles.checkoutContent}
           onPress={() => navigation.navigate('Checkout')}
         >
-          Поръчай
+          Продължи към поръчката
         </Button>
       </View>
     </View>

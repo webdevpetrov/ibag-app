@@ -7,7 +7,7 @@ const FavoritesStack = createNativeStackNavigator();
 export default function FavoritesNavigator() {
   return (
     <FavoritesStack.Navigator screenOptions={{ headerBackButtonDisplayMode: 'minimal' }}>
-      <FavoritesStack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ headerShown: false }} />
+      <FavoritesStack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ title: 'Любими' }} />
       <FavoritesStack.Screen name="ProductScreen" component={ProductScreen} options={{ headerShown: true, title: 'Продукт' }} />
     </FavoritesStack.Navigator>
   );

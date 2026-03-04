@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text, HelperText, Snackbar } from 'react-native-paper';
 import { useAuth } from '../../context/AuthContext';
+import Logo from '../../components/Logo';
 import theme from '../../config/theme';
 
 export default function RegisterScreen({ navigation }) {
@@ -68,6 +69,7 @@ export default function RegisterScreen({ navigation }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <Logo />
         <Text style={styles.title}>Регистрация</Text>
 
         <TextInput
@@ -172,7 +174,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 24,
-    paddingTop: 40,
+    paddingTop: 60,
   },
   title: {
     fontSize: 28,

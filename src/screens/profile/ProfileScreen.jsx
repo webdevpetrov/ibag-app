@@ -2,6 +2,7 @@ import { View, ScrollView, StyleSheet, Pressable, Switch } from 'react-native';
 import { Avatar, Text, Divider } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useAuth } from '../../context/AuthContext';
+import { useFavorites } from '../../context/FavoritesContext';
 import theme from '../../config/theme';
 
 function MenuItem({ icon, label, badge, onPress }) {
@@ -23,6 +24,7 @@ function MenuItem({ icon, label, badge, onPress }) {
 
 function AuthView({ navigation }) {
   const { user, signOut, biometricAvailable, biometricEnabled, enableBiometric, disableBiometric } = useAuth();
+  const { favorites } = useFavorites();
 
   async function handleBiometricToggle(value) {
     if (value) {
@@ -50,9 +52,7 @@ function AuthView({ navigation }) {
       <View style={styles.section}>
         <MenuItem icon="package-variant-closed" label="Поръчки" onPress={() => navigation.navigate('OrderList')} />
         <MenuItem icon="alert-circle-outline" label="Рекламации" onPress={() => navigation.navigate('ComplaintList')} />
-        <MenuItem icon="heart-outline" label="Любими" />
-        <MenuItem icon="star-outline" label="Оцени ни" badge={11} />
-        <MenuItem icon="bell-outline" label="Известия" badge={10} />
+        <MenuItem icon="heart-outline" label="Любими" badge={favorites.length || null} onPress={() => navigation.navigate('Favorites')} />
       </View>
 
       <Divider />
@@ -61,8 +61,6 @@ function AuthView({ navigation }) {
         <Text style={styles.sectionTitle}>Моят профил</Text>
         <MenuItem icon="account-edit-outline" label="Редакция на профил" onPress={() => navigation.navigate('ProfileEdit')} />
         <MenuItem icon="map-marker-outline" label="Адреси" onPress={() => navigation.navigate('AddressList')} />
-        <MenuItem icon="ticket-percent-outline" label="Промо кодове" />
-        <MenuItem icon="wallet-giftcard" label="Ваучери" />
       </View>
 
       <Divider />

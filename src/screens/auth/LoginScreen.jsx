@@ -3,6 +3,7 @@ import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 're
 import { TextInput, Button, Text, HelperText, Snackbar } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useAuth } from '../../context/AuthContext';
+import Logo from '../../components/Logo';
 import theme from '../../config/theme';
 
 export default function LoginScreen({ navigation }) {
@@ -60,6 +61,7 @@ export default function LoginScreen({ navigation }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <Logo />
         <Text style={styles.title}>Вход</Text>
 
         {showBiometricButton && (
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 24,
-    paddingTop: 40,
+    paddingTop: 60,
   },
   title: {
     fontSize: 28,
