@@ -3,26 +3,30 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CartContext = createContext(null);
 
-const CART_KEY = 'cart_items';
+const CART_KEY_PREFIX = 'cart_items_';
 
-export function CartProvider({ children }) {
+export function CartProvider({ userId, children }) {
+  const storageKey = `${CART_KEY_PREFIX}${userId}`;
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem(CART_KEY)
+    if (!userId) return;
+    setIsLoading(true);
+    setItems([]);
+    AsyncStorage.getItem(storageKey)
       .then((stored) => {
         if (stored) setItems(JSON.parse(stored));
       })
       .catch(() => {})
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [storageKey, userId]);
 
   useEffect(() => {
-    if (!isLoading) {
-      AsyncStorage.setItem(CART_KEY, JSON.stringify(items)).catch(() => {});
+    if (!isLoading && userId) {
+      AsyncStorage.setItem(storageKey, JSON.stringify(items)).catch(() => {});
     }
-  }, [items, isLoading]);
+  }, [items, isLoading, storageKey, userId]);
 
   const addToCart = useCallback((product) => {
     setItems((prev) => {

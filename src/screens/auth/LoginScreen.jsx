@@ -7,7 +7,7 @@ import Logo from '../../components/Logo';
 import theme from '../../config/theme';
 
 export default function LoginScreen({ navigation }) {
-  const { signIn, biometricAvailable, biometricEnabled, hasStoredToken, pendingBiometric, authenticateWithBiometric } = useAuth();
+  const { signIn, biometricAvailable, biometricEnabled, biometricUserName, hasStoredToken, pendingBiometric, authenticateWithBiometric } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -81,7 +81,7 @@ export default function LoginScreen({ navigation }) {
               style={styles.biometricButton}
               textColor={theme.colors.primary}
             >
-              Вход с биометрия
+              {biometricUserName ? `Вход като ${biometricUserName}` : 'Вход с биометрия'}
             </Button>
             <View style={styles.dividerRow}>
               <View style={styles.dividerLine} />

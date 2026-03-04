@@ -10,7 +10,7 @@ import { FavoritesProvider } from './src/context/FavoritesContext';
 import theme from './src/config/theme';
 
 function AppContent() {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated, user } = useAuth();
 
   if (isLoading) {
     return <Loader />;
@@ -19,7 +19,7 @@ function AppContent() {
   return (
     <NavigationContainer>
       {isAuthenticated ? (
-        <CartProvider>
+        <CartProvider userId={user?.id}>
           <FavoritesProvider>
             <MainNavigator />
           </FavoritesProvider>
