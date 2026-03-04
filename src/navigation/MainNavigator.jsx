@@ -10,15 +10,12 @@ import CategoriesNavigator from './CategoriesNavigator';
 import SearchNavigator from './SearchNavigator';
 import FavoritesNavigator from './FavoritesNavigator';
 import CartNavigator from './CartNavigator';
-import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import theme from '../config/theme';
 
 function Header() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { user } = useAuth();
-
   function handleAvatarPress() {
     navigation.navigate('Home', { screen: 'ProfileNav', params: { screen: 'Profile' } });
   }
@@ -30,17 +27,13 @@ function Header() {
             <Text style={styles.logoText}>iBag</Text>
         </Link>
       </View>
-      <View style={styles.headerCenter}>
-        <Text style={styles.headerLabel}>ПЪРВИ СВОБОДЕН ЧАС</Text>
-        <Text style={styles.headerTime}>ДНЕС 20:00 - 21:00</Text>
-      </View>
-      <Pressable style={styles.avatarContainer} onPress={handleAvatarPress}>
-        <Avatar.Text
+      <View style={styles.headerCenter} />
+      <Pressable onPress={handleAvatarPress}>
+        <Avatar.Icon
           size={44}
-          label={user?.name?.charAt(0)?.toUpperCase() ?? '?'}
-          style={{ backgroundColor: theme.colors.avatarBackground }}
+          icon="account"
+          style={{ backgroundColor: theme.colors.notification }}
         />
-        <Badge style={styles.badge}>21</Badge>
       </Pressable>
     </View>
   );
@@ -174,24 +167,6 @@ const styles = StyleSheet.create({
   headerCenter: {
     flex: 1,
     marginLeft: 12,
-  },
-  headerLabel: {
-    color: theme.colors.onPrimary,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  headerTime: {
-    color: theme.colors.onPrimary,
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  avatarContainer: {
-    position: 'relative',
-  },
-  badge: {
-    position: 'absolute',
-    top: -4,
-    right: -4,
   },
   cartBadge: {
     position: 'absolute',
