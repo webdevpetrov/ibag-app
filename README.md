@@ -5,7 +5,7 @@ React Native Course Project — E-commerce mobile application
 > **Disclaimer:** This project is developed solely for educational purposes as part of a SoftUni React Native course. It is inspired by the [eBag.bg] online store. All product data, branding, and assets are used for demonstration only. This application is not affiliated with or endorsed by eBag.bg and is not intended for commercial use. The repository and all associated resources will be removed after the course evaluation is completed.
 
 ## Link to APK
-
+https://expo.dev/accounts/webdev33/projects/ibagdev/builds/0a8e0651-037c-4107-aa41-c6d4f4290905
 
 ## Walkthrough Tutorial
 
