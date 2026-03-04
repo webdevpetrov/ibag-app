@@ -183,6 +183,8 @@ Navigation is triggered via `navigation.navigate()` passing an `id` as a route p
 - Complaints: `GET /complaints` (paginated), `GET /complaints/{id}`
 - User profile: `GET /user`
 
+**Pull-to-Refresh** is implemented on CategoriesScreen and CategoryScreen — pulls fresh data from the server via FlatList's `onRefresh` / `refreshing` props.
+
 **Create (POST)**
 - Registration: `POST /register`
 - Login: `POST /login`
