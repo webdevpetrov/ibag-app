@@ -27,8 +27,8 @@ React Native Course Project — E-commerce mobile application
 
 ### Steps
 ```bash
-git clone <repo-url>
-cd ibagdev
+git clone https://github.com/webdevpetrov/ibag-app.git
+cd ibag-app
 npm install
 npx expo start
 ```
