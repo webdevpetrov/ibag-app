@@ -29,6 +29,7 @@ React Native Course Project — E-commerce mobile application
 ```bash
 git clone https://github.com/webdevpetrov/ibag-app.git
 cd ibag-app
+cp .env.example .env
 npm install
 npx expo start
 ```
