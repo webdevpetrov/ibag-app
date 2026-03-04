@@ -13,6 +13,7 @@ import { Card, Button, Chip, IconButton } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { getCategories, getProducts } from '../api/client';
 import { getCategoryIcon } from '../config/categoryIcons';
+import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import theme from '../config/theme';
@@ -176,6 +177,7 @@ const CategoryRow = memo(function CategoryRow({ category, products, navigation, 
 });
 
 export default function HomeScreen({ navigation }) {
+  const { token } = useAuth();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { width: screenWidth } = useWindowDimensions();
@@ -188,7 +190,7 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     const promises = FEATURED_CATEGORIES.map((cat) =>
-      getProducts(cat.id, 1)
+      getProducts(token, cat.id, 1)
         .then((data) => {
           const list = data.data || data;
           return { id: cat.id, products: Array.isArray(list) ? list : [] };
@@ -197,7 +199,7 @@ export default function HomeScreen({ navigation }) {
     );
 
     Promise.all([
-      getCategories()
+      getCategories(token)
         .then((data) => {
           const all = data.data || data;
           return Array.isArray(all) ? all.slice(0, 9) : [];

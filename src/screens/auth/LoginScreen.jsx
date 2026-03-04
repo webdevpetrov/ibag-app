@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { TextInput, Button, Text, HelperText, Snackbar } from 'react-native-paper';
+import { TextInput, Button, Text, HelperText } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useAuth } from '../../context/AuthContext';
 import Logo from '../../components/Logo';
@@ -62,7 +62,11 @@ export default function LoginScreen({ navigation }) {
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Logo />
-        <Text style={styles.title}>Вход</Text>
+        <View style={styles.authTabs}>
+          <Text style={styles.authTabActive}>Вход</Text>
+          <Text style={styles.authTabSeparator}>|</Text>
+          <Text style={styles.authTabLink} onPress={() => navigation.navigate('Register')}>Регистрация</Text>
+        </View>
 
         {showBiometricButton && (
           <View style={styles.biometricSection}>
@@ -122,6 +126,10 @@ export default function LoginScreen({ navigation }) {
           {fieldErrors.password?.[0]}
         </HelperText>
 
+        {!!generalError && (
+          <Text style={styles.errorText}>{generalError}</Text>
+        )}
+
         <Button
           mode="contained"
           onPress={handleLogin}
@@ -135,22 +143,9 @@ export default function LoginScreen({ navigation }) {
 
         <View style={styles.linkRow}>
           <Text>Нямаш акаунт? </Text>
-          <Text
-            style={styles.link}
-            onPress={() => navigation.navigate('Register')}
-          >
-            Регистрация
-          </Text>
+          <Text style={styles.link} onPress={() => navigation.navigate('Register')}>Регистрация</Text>
         </View>
       </ScrollView>
-
-      <Snackbar
-        visible={!!generalError}
-        onDismiss={() => setGeneralError('')}
-        duration={4000}
-      >
-        {generalError}
-      </Snackbar>
     </KeyboardAvoidingView>
   );
 }
@@ -160,15 +155,33 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
+  errorText: {
+    color: theme.colors.error,
+    textAlign: 'center',
+    marginBottom: 4,
+  },
   content: {
     padding: 24,
     paddingTop: 60,
   },
-  title: {
+  authTabs: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  authTabActive: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 24,
     color: theme.colors.text,
+  },
+  authTabSeparator: {
+    fontSize: 28,
+    marginHorizontal: 12,
+    color: '#ccc',
+  },
+  authTabLink: {
+    fontSize: 28,
+    color: theme.colors.primary,
   },
   input: {
     marginBottom: 0,

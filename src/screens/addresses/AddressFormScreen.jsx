@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { TextInput, Button, Text, HelperText, Snackbar, Chip } from 'react-native-paper';
@@ -50,6 +50,8 @@ export default function AddressFormScreen({ navigation, route }) {
   const [isDefault, setIsDefault] = useState(existing?.is_default || false);
   const [lat, setLat] = useState(existing?.lat || null);
   const [lng, setLng] = useState(existing?.lng || null);
+
+  const scrollRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
@@ -162,6 +164,7 @@ export default function AddressFormScreen({ navigation, route }) {
       keyboardVerticalOffset={headerHeight}
     >
       <ScrollView
+        ref={scrollRef}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
@@ -393,6 +396,7 @@ export default function AddressFormScreen({ navigation, route }) {
           autoCorrect={false}
           error={!!fieldErrors.contact_phone}
           style={styles.input}
+          onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300)}
         />
         <HelperText type="error" visible={!!fieldErrors.contact_phone}>
           {fieldErrors.contact_phone?.[0]}

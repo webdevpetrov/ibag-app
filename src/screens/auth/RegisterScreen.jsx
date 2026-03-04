@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { TextInput, Button, Text, HelperText, Snackbar } from 'react-native-paper';
+import { TextInput, Button, Text, HelperText } from 'react-native-paper';
 import { useAuth } from '../../context/AuthContext';
 import Logo from '../../components/Logo';
 import theme from '../../config/theme';
@@ -70,7 +70,11 @@ export default function RegisterScreen({ navigation }) {
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Logo />
-        <Text style={styles.title}>Регистрация</Text>
+        <View style={styles.authTabs}>
+          <Text style={styles.authTabLink} onPress={() => navigation.navigate('Login')}>Вход</Text>
+          <Text style={styles.authTabSeparator}>|</Text>
+          <Text style={styles.authTabActive}>Регистрация</Text>
+        </View>
 
         <TextInput
           label="Име"
@@ -134,6 +138,10 @@ export default function RegisterScreen({ navigation }) {
           {fieldErrors.password_confirmation?.[0]}
         </HelperText>
 
+        {!!generalError && (
+          <Text style={styles.errorText}>{generalError}</Text>
+        )}
+
         <Button
           mode="contained"
           onPress={handleRegister}
@@ -147,22 +155,10 @@ export default function RegisterScreen({ navigation }) {
 
         <View style={styles.linkRow}>
           <Text>Вече имаш акаунт? </Text>
-          <Text
-            style={styles.link}
-            onPress={() => navigation.navigate('Login')}
-          >
-            Вход
-          </Text>
+          <Text style={styles.link} onPress={() => navigation.navigate('Login')}>Вход</Text>
         </View>
       </ScrollView>
 
-      <Snackbar
-        visible={!!generalError}
-        onDismiss={() => setGeneralError('')}
-        duration={4000}
-      >
-        {generalError}
-      </Snackbar>
     </KeyboardAvoidingView>
   );
 }
@@ -176,11 +172,29 @@ const styles = StyleSheet.create({
     padding: 24,
     paddingTop: 60,
   },
-  title: {
+  authTabs: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  authTabActive: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 24,
     color: theme.colors.text,
+  },
+  authTabSeparator: {
+    fontSize: 28,
+    marginHorizontal: 12,
+    color: '#ccc',
+  },
+  authTabLink: {
+    fontSize: 28,
+    color: theme.colors.primary,
+  },
+  errorText: {
+    color: theme.colors.error,
+    textAlign: 'center',
+    marginBottom: 4,
   },
   input: {
     marginBottom: 0,

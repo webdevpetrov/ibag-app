@@ -3,17 +3,19 @@ import { FlatList, View, Text, Pressable, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { getCategories } from '../../api/client';
 import { getCategoryIcon } from '../../config/categoryIcons';
+import { useAuth } from '../../context/AuthContext';
 import Loader from '../../components/Loader';
 import theme from '../../config/theme';
 
 export default function CategoriesScreen({ navigation }) {
+  const { token } = useAuth();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchCategories = useCallback(() => {
-    getCategories()
+    getCategories(token)
       .then((data) => setCategories(data.data || data))
       .catch((err) => setError(err.message || 'Грешка при зареждане.'))
       .finally(() => {

@@ -10,6 +10,7 @@ import {
 import { Button, IconButton } from 'react-native-paper';
 import { getProduct } from '../../api/client';
 import Loader from '../../components/Loader';
+import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import theme from '../../config/theme';
@@ -17,6 +18,7 @@ import theme from '../../config/theme';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function ProductScreen({ route, navigation }) {
+  const { token } = useAuth();
   const { productId } = route.params;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,7 +34,7 @@ export default function ProductScreen({ route, navigation }) {
   }, [product, addToCart]);
 
   useEffect(() => {
-    getProduct(productId)
+    getProduct(token, productId)
       .then((data) => {
         const p = data.data || data;
         setProduct(p);

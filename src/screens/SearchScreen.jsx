@@ -2,11 +2,13 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { getProducts, searchProducts } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import Loader from '../components/Loader';
 import ProductRow from '../components/ProductRow';
 import theme from '../config/theme';
 
 export default function SearchScreen({ navigation }) {
+  const { token } = useAuth();
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
@@ -20,7 +22,7 @@ export default function SearchScreen({ navigation }) {
     if (isFirstPage) setLoading(true);
     else setLoadingMore(true);
 
-    const request = q ? searchProducts(q, pageNum) : getProducts(null, pageNum);
+    const request = q ? searchProducts(token, q, pageNum) : getProducts(token, null, pageNum);
 
     request
       .then((data) => {

@@ -74,32 +74,32 @@ export function logout(token) {
     .catch(handleError);
 }
 
-export function getCategories() {
+export function getCategories(token) {
   return api
-    .get('/categories')
+    .get('/categories', { headers: { Authorization: `Bearer ${token}` } })
     .then((r) => r.data)
     .catch(handleError);
 }
 
-export function getProducts(categoryId, page = 1) {
+export function getProducts(token, categoryId, page = 1) {
   const params = { page };
   if (categoryId) params.category = categoryId;
   return api
-    .get('/products', { params })
+    .get('/products', { params, headers: { Authorization: `Bearer ${token}` } })
     .then((r) => r.data)
     .catch(handleError);
 }
 
-export function searchProducts(q, page = 1) {
+export function searchProducts(token, q, page = 1) {
   return api
-    .get('/products', { params: { q, page } })
+    .get('/products', { params: { q, page }, headers: { Authorization: `Bearer ${token}` } })
     .then((r) => r.data)
     .catch(handleError);
 }
 
-export function getProduct(id) {
+export function getProduct(token, id) {
   return api
-    .get(`/products/${id}`)
+    .get(`/products/${id}`, { headers: { Authorization: `Bearer ${token}` } })
     .then((r) => r.data)
     .catch(handleError);
 }

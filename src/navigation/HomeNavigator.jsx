@@ -8,8 +8,8 @@ const HomeStack = createNativeStackNavigator();
 
 export default function HomeNavigator() {
   return (
-    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-      <HomeStack.Screen name="HomeScreen" component={HomeScreen} options={{ headerBackTitle: '' }} />
+    <HomeStack.Navigator screenOptions={{ headerShown: false, headerBackButtonDisplayMode: 'minimal' }}>
+      <HomeStack.Screen name="HomeScreen" component={HomeScreen} options={{ headerBackTitle: 'Начало' }} />
       <HomeStack.Screen
         name="CategoryScreen"
         component={CategoryScreen}

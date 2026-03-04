@@ -3,11 +3,13 @@ import { View, Text, FlatList, Pressable, ActivityIndicator, StyleSheet } from '
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { getProducts } from '../../api/client';
 import { getCategoryIcon } from '../../config/categoryIcons';
+import { useAuth } from '../../context/AuthContext';
 import Loader from '../../components/Loader';
 import ProductRow from '../../components/ProductRow';
 import theme from '../../config/theme';
 
 export default function CategoryScreen({ route, navigation }) {
+  const { token } = useAuth();
   const { category } = route.params;
   const subcategories = category.children || [];
   const hasChildren = subcategories.length > 0;
@@ -26,7 +28,7 @@ export default function CategoryScreen({ route, navigation }) {
     else if (isFirstPage) setLoading(true);
     else setLoadingMore(true);
 
-    getProducts(categoryId, pageNum)
+    getProducts(token, categoryId, pageNum)
       .then((data) => {
         const items = data.data || [];
         const last = data.last_page || data.meta?.last_page || 1;
