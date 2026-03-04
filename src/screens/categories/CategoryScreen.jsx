@@ -1,17 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  Pressable,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, FlatList, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { getProducts } from '../../api/client';
 import { getCategoryIcon } from '../../config/categoryIcons';
 import Loader from '../../components/Loader';
+import ProductRow from '../../components/ProductRow';
 import theme from '../../config/theme';
 
 export default function CategoryScreen({ route, navigation }) {
@@ -113,20 +106,10 @@ export default function CategoryScreen({ route, navigation }) {
       data={products}
       keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => (
-        <Pressable
-          style={styles.productRow}
+        <ProductRow
+          product={item}
           onPress={() => navigation.navigate('ProductScreen', { productId: item.id })}
-        >
-          {item.image_url ? (
-            <Image source={{ uri: item.image_url }} style={styles.productImage} />
-          ) : (
-            <View style={[styles.productImage, styles.imagePlaceholder]} />
-          )}
-          <View style={styles.productInfo}>
-            <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-            <Text style={styles.productPrice}>{item.price} лв.</Text>
-          </View>
-        </Pressable>
+        />
       )}
       contentContainerStyle={styles.listContent}
       refreshing={refreshing}
@@ -181,36 +164,6 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 12,
     gap: 10,
-  },
-  productRow: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.surface,
-    borderRadius: 10,
-    padding: 10,
-    alignItems: 'center',
-  },
-  productImage: {
-    width: 72,
-    height: 72,
-    borderRadius: 8,
-  },
-  imagePlaceholder: {
-    backgroundColor: '#eee',
-  },
-  productInfo: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  productName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: theme.colors.text,
-  },
-  productPrice: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: theme.colors.primary,
-    marginTop: 4,
   },
   center: {
     flex: 1,

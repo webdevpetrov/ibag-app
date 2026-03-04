@@ -7,7 +7,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import HomeNavigator from './HomeNavigator';
 import CategoriesNavigator from './CategoriesNavigator';
-import SearchScreen from '../screens/SearchScreen';
+import SearchNavigator from './SearchNavigator';
 import FavoritesNavigator from './FavoritesNavigator';
 import CartNavigator from './CartNavigator';
 import { useAuth } from '../context/AuthContext';
@@ -112,7 +112,7 @@ export default function BottomTabsNavigator() {
       />
       <BottomTabs.Screen
         name="Search"
-        component={SearchScreen}
+        component={SearchNavigator}
         options={{
           tabBarLabel: 'Търсене',
           tabBarIcon: ({ color, size }) => (

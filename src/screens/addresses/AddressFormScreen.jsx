@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { TextInput, Button, Text, HelperText, Snackbar, Chip } from 'react-native-paper';
 import * as Location from 'expo-location';
 import { useAuth } from '../../context/AuthContext';
@@ -14,6 +15,7 @@ export default function AddressFormScreen({ navigation, route }) {
   const isEdit = !!existing;
 
   const { token, user } = useAuth();
+  const headerHeight = useHeaderHeight();
 
   const [label, setLabel] = useState(existing?.label || LABEL_OPTIONS[0]);
   const [customLabel, setCustomLabel] = useState(
@@ -157,7 +159,7 @@ export default function AddressFormScreen({ navigation, route }) {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      keyboardVerticalOffset={headerHeight}
     >
       <ScrollView
         contentContainerStyle={styles.content}
@@ -437,7 +439,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 120,
   },
   sectionTitle: {
     fontSize: 13,

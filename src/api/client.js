@@ -90,6 +90,13 @@ export function getProducts(categoryId, page = 1) {
     .catch(handleError);
 }
 
+export function searchProducts(q, page = 1) {
+  return api
+    .get('/products', { params: { q, page } })
+    .then((r) => r.data)
+    .catch(handleError);
+}
+
 export function getProduct(id) {
   return api
     .get(`/products/${id}`)
