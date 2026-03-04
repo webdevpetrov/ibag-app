@@ -10,6 +10,7 @@ React Native Course Project — E-commerce mobile application
 ## Walkthrough Tutorial
 
 1. **Login / Register** — Open the app and sign in with email and password, or create a new account. If biometric login is enabled (after initial sign-in), the app will authenticate you automatically.
+   - You can register a new account or use the test credentials: `t@test.com` / `12345678`
 2. **Home** — Landing screen with promotional banners and product sliders grouped by category.
 3. **Categories** — Browse all categories, select one, and view its products. Tap a product for details.
 4. **Search** — Search products by name using the search bar.
